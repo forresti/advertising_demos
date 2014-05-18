@@ -3,6 +3,7 @@ from matplotlib import pyplot
 import pylab
 import numpy as np
 import os
+import time
 from bs4 import BeautifulSoup
 import selenium.webdriver as webdriver
 from IPython import embed
@@ -44,13 +45,10 @@ def get_image_files():
 #thanks: stackoverflow.com/questions/18130499/how-to-scrape-instagram-with-beautifulsoup
 #for www.instagram.com (3/14/14)
 def scrape_imgUrls_instagram(pageUrl, driver):
-    print '    Scraping list of images...'
     driver.get(pageUrl)
     soup = BeautifulSoup(driver.page_source)
-    print '    Done scraping list of images'
 
     imgUrls = [];
-    print '    Downloading images...'
     for photoHtml in soup.findAll('li', {'class':'photo'}):
         imgUrl = None
         for currDiv in photoHtml.findAll('div'): # for the most part, each 'div' is an image or video
@@ -62,17 +60,22 @@ def scrape_imgUrls_instagram(pageUrl, driver):
             imgUrls.append(imgUrl)
             print '        ', imgUrl
 
-    print '    Done downloading images'
     return imgUrls
 
 # hard-coded out directory (could have user provide the out directory)
 def pull_images_instagram(pageUrl, imgDir_thisPage, driver):
+    start_time = time.time()
+    print '    Scraping list of images from %s' %pageUrl
     imgUrls = scrape_imgUrls_instagram(pageUrl, driver)
+    scrape_url_time = time.time() - start_time
+    print '    Done scraping list of images (%f sec)' %scrape_url_time
 
-    #scrape the actual images
+    start_time = time.time()
+    print '    Downloading images...'
     if not os.path.exists(imgDir_thisPage):
         os.mkdir(imgDir_thisPage)
     for url in imgUrls:
         forrestRequests.robustRequest_image(url, imgDir_thisPage)
-
+    download_time = time.time() - start_time
+    print '    Done downloading images (%f sec)' %download_time
 

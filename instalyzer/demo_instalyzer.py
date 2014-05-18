@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import selenium.webdriver as webdriver
 import os
 import sys
+import time
 from IPython import embed
 from pyvirtualdisplay import Display
 import forrestRequests
@@ -35,6 +36,7 @@ def run_demo(acc):
     # ANALYZE
     print "    Analyzing images with deep learning..."
      
+    start_time = time.time()
     #TODO: batch these images:
     high_level_categories = []
     pred = [] #low-level categories
@@ -50,7 +52,9 @@ def run_demo(acc):
     cat_sort = list(reversed(sorted([ (c,v) for v,c in category_freq.iteritems() ]))) # flip dict and sort 
     #top_category = max(category_freq, key=category_freq.get) # TODO: get best 2 categories?
 
-    print "    Done analyzing images"
+    analysis_time = time.time() - start_time #in sec
+
+    print "    Done analyzing images (%f sec)" %analysis_time
     print "    we detected:    ", cat_sort[0:3]
 
 if len(sys.argv) < 2: # argv[0] is the demo_instalyzer.py 

@@ -9,7 +9,8 @@ import synsets_to_graph
 import instalyzer_core as insta 
 
 class InstalyzerCaffe:
-    MODEL_FILE = '/media/big_disk/installers_old/caffe_lowMemConv//examples/imagenet/imagenet_deploy.prototxt'
+    #MODEL_FILE = '/media/big_disk/installers_old/caffe_lowMemConv//examples/imagenet/imagenet_deploy.prototxt'
+    MODEL_FILE = '/media/big_disk/installers_old/caffe_lowMemConv//examples/imagenet/imagenet_deploy_batch1.prototxt'
     PRETRAINED = 'thirdparty/alexnet_train_iter_470000'
     synset_word_file = 'thirdparty/synset_words.txt'
     ancestorKeywords = ['conveyance, transport', #Travel, Cars, Airplanes... 
@@ -25,9 +26,10 @@ class InstalyzerCaffe:
                         'geological formation, formation'] #based on relevance to online ad community
 
     gr = synsets_to_graph.get_graph() #imagenet graph as a networkx object
+    center_only = True #don't do the 10-crops thing
 
     def __init__(self):
-        self.net = imagenet.ImageNetClassifier(self.MODEL_FILE, self.PRETRAINED) #the primary object in this class
+        self.net = imagenet.ImageNetClassifier(self.MODEL_FILE, self.PRETRAINED, self.center_only) #the primary object in this class
         self.net.caffenet.set_phase_test()
         self.net.caffenet.set_mode_cpu()
         [self.synset_WNIDs, self.synset_words] = synsets_to_graph.load_synset_words(self.synset_word_file)
