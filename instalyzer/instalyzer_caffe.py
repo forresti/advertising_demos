@@ -13,6 +13,8 @@ class InstalyzerCaffe:
     MODEL_FILE = '/media/big_disk/installers_old/caffe_lowMemConv//examples/imagenet/imagenet_deploy_batch1.prototxt'
     PRETRAINED = 'thirdparty/alexnet_train_iter_470000'
     synset_word_file = 'thirdparty/synset_words.txt'
+
+    #TODO: remove ancestorKeywords ... it's depricated and replaced by ancestorKeywords_dict.
     ancestorKeywords = ['conveyance, transport', #Travel, Cars, Airplanes... 
                         'electronic equipment', 
                         'iPod', 
@@ -24,6 +26,21 @@ class InstalyzerCaffe:
                         'dog, domestic dog, Canis familiaris', #Pets
                         'cat, true cat', #Pets 
                         'geological formation, formation'] #based on relevance to online ad community
+
+    # human-readable category list so far:
+    #    Vehicles and Travel, Handheld Electronics, iPod, Computers, Sports, Food and Drink, Pets, Outdoors 
+    # dictionary... {'imagenet high-level category' : 'human readable category'}
+    ancestorKeywords_dict = {'conveyance, transport': 'Vehicles and Travel',
+                        'electronic equipment': 'Handheld Electronics', 
+                        'iPod': 'iPod', 
+                        'personal computer, PC, microcomputer': 'Computers',
+                        'sports equipment': 'Sports',
+                        'sports implement': 'Sports',
+                        'food, solid food': 'Food and Drink', 
+                        'food, nutrient': 'Food and Drink', 
+                        'dog, domestic dog, Canis familiaris': 'Pets', 
+                        'cat, true cat': 'Pets',
+                        'geological formation, formation': 'Outdoors'}
 
     gr = synsets_to_graph.get_graph() #imagenet graph as a networkx object
     center_only = True #don't do the 10-crops thing
@@ -48,15 +65,16 @@ class InstalyzerCaffe:
         return topPredName
 
     # @param topPredName = top few (typically 5) categories predicted for an image. in english (e.g. 'digital computer')
-    # @param ancestorKeywords = the full list of (typically high-level) categories to look for (e.g. 'electronics')
-    # @param param gr = imagenet synset graph
     def check_relevant_ancestors(self, topPredName):
         found_relevant_ancestors = []
         for className in topPredName: #top few predicted classes
             newAncestors = nx.dag.ancestors(self.gr, className)
             for anc in newAncestors:
-                if anc in self.ancestorKeywords:
-                    found_relevant_ancestors.append(anc)
+                if anc in self.ancestorKeywords_dict.keys():
+                    #found_relevant_ancestors.append(anc) #imagenet nomenclature (e.g. sports equipment)
+                    anc_readable = self.ancestorKeywords_dict[anc]
+                    found_relevant_ancestors.append(anc_readable) #e.g. Sports
+
         found_relevant_ancestors = list(set(found_relevant_ancestors)) #remove duplicates
         return found_relevant_ancestors
 
