@@ -1,0 +1,40 @@
+
+
+<!-- 
+notes...
+
+playground for fb connect:
+https://developers.facebook.com/tools/console/ 
+
+-->
+
+testing fb connect
+
+<!-- 
+thanks:
+https://developers.facebook.com/docs/javascript/quickstart/v2.0
+-->
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '{your-app-id}',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+<!-- 
+thanks:
+https://developers.facebook.com/docs/plugins/login-button
+-->
+
+<div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" data-auto-logout-link="false"></div>
